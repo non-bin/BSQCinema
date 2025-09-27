@@ -5,7 +5,7 @@
   "info": {
     "name": "Cinema",
     "id": "cinema",
-    "version": "0.0.1",
+    "version": "0.1.0",
     "url": "https://github.com/bsq-ports/Cinema",
     "additionalData": {
       "overrideSoName": "libcinema.so",
