@@ -4,7 +4,6 @@ env:
   module_id: cinema
   qmodName: Cinema
   cache-name: Cinema_cache
-  version: 0.0.1
 
 on:
   push:
@@ -71,8 +70,8 @@ jobs:
     - name: Upload qmod artifact
       uses: actions/upload-artifact@v4
       with:
-        name: ${{env.qmodName}}_${{version}}.qmod
-        path: ./${{ env.qmodName }}_${{version}}.qmod
+        name: ${{env.qmodName}}_0.0.1.qmod
+        path: ./${{ env.qmodName }}_0.0.1.qmod
         if-no-files-found: error
 
     - name: Upload debug artifact
