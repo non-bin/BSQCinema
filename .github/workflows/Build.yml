@@ -4,6 +4,7 @@ env:
   module_id: cinema
   qmodName: Cinema
   cache-name: Cinema_cache
+  version: 0.0.1
 
 on:
   push:
@@ -14,7 +15,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    
+
     steps:
     - uses: actions/checkout@v4
       name: Checkout
@@ -30,14 +31,23 @@ jobs:
         resolve_ndk: true
         #required
         workflow_token: ${{secrets.GITHUB_TOKEN}}
-        restore: true # will run restore on download
         cache: true #will cache dependencies
-        
+
+    - name: Restore
+      run: |
+        cd ${GITHUB_WORKSPACE}
+        qpm restore
+
     - name: Build
       run: |
         cd ${GITHUB_WORKSPACE}
         pwsh -Command ./build.ps1 -release
         qpm qmod build
+
+    - name: Copy extra libs to extern/libs
+      run: |
+        mkdir -p extern/libs
+        cp -r third_party/cpython/lib/* extern/libs/
 
     - name: Create Qmod
       run: |
@@ -49,7 +59,7 @@ jobs:
         cd ./build/
         pattern="lib${module_id}*.so"
         files=( $pattern )
-        echo "NAME=${files[0]}" >> ${GITHUB_OUTPUT} 
+        echo "NAME=${files[0]}" >> ${GITHUB_OUTPUT}
 
     - name: Upload non-debug artifact
       uses: actions/upload-artifact@v4
@@ -61,8 +71,8 @@ jobs:
     - name: Upload qmod artifact
       uses: actions/upload-artifact@v4
       with:
-        name: ${{env.qmodName}}.qmod
-        path: ./${{ env.qmodName }}.qmod
+        name: ${{env.qmodName}}_${{version}}.qmod
+        path: ./${{ env.qmodName }}_${{version}}.qmod
         if-no-files-found: error
 
     - name: Upload debug artifact
