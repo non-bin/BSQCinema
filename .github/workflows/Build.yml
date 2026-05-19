@@ -67,6 +67,13 @@ jobs:
         path: ./build/${{ steps.libname.outputs.NAME }}
         if-no-files-found: error
 
+    - name: Upload libpython3 artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: libpython3.so
+        path: ./third_party/cpython/lib/libpython3.so
+        if-no-files-found: error
+
     - name: Upload qmod artifact
       uses: actions/upload-artifact@v4
       with:
