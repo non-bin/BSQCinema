@@ -153,7 +153,10 @@ namespace Cinema
                 }
             };
 
+            DEBUG("Creating temp directory");
             fs::path tempFolder = GetTemporaryDownloadFolder();
+            std::filesystem::create_directories(tmp_dir_path); // tmp_dir_path should be your std::string or std::filesystem::path variable for the tmp directory
+
             DEBUG("Queueing download command");
             std::string command = std::format("_real_main(['-v', '--no-playlist', '--no-part', '--no-mtime', '--no-cache-dir', '-o', 'video.mp4', '-f', '{}', '-P', '{}', '{}'])",
                 VideoQuality::ToYoutubeDLFormat(video, quality),
