@@ -120,7 +120,7 @@ namespace Cinema
             ERROR("Video had no valid url!");
             return;
         }
-        
+
         std::lock_guard lock(downloadWorkerMutex);
         downloadWorkerQueue.emplace([video, quality, videoUrl, this]
         {
@@ -128,6 +128,7 @@ namespace Cinema
 
             auto stdoutWriteHandler = [&](std::string_view data)
             {
+                DEBUG("{}", data);
                 if(data.find("[download]") != std::string::npos)
                 {
                     if(data.ends_with(".mp4"))
@@ -138,7 +139,7 @@ namespace Cinema
                     {
                         video->downloadState = DownloadState::DownloadingAudio;
                     }
-                    
+
                     if(data.find('%') == std::string::npos)
                     {
                         return;
@@ -155,7 +156,7 @@ namespace Cinema
 
             DEBUG("Creating temp directory");
             fs::path tempFolder = GetTemporaryDownloadFolder();
-            fs::create_directories(tempFolder); // tmp_dir_path should be your std::string or std::filesystem::path variable for the tmp directory
+            fs::create_directories(tempFolder);
 
             DEBUG("Queueing download command");
             std::string command = std::format("_real_main(['-v', '--no-playlist', '--no-part', '--no-mtime', '--no-cache-dir', '-o', 'video.mp4', '-f', '{}', '-P', '{}', '{}'])",
@@ -169,15 +170,19 @@ namespace Cinema
             fut.wait();
             DEBUG("Python returned code {}", fut.get());
             Python::StandardOutputWriteEvent -= stdoutWriteHandler;
-            
+
+            DEBUG("Getting directory itterator");
             auto files = fs::directory_iterator(tempFolder);
+            DEBUG("done");
             auto videoFile = (files | std::views::filter([](const auto& e){return e.path().filename().string().ends_with(".mp4");})).begin()->path();
+            // DEBUG("video file: {}", videoFile);
             auto audioFile = (files | std::views::filter([](const auto& e){return e.path().filename().string().ends_with(".m4a");})).begin()->path();
-            
+            // DEBUG("audio file: {}", audioFile);
+
             DEBUG("Muxing downloaded files");
             DEBUG("Video: {}", videoFile.c_str());
             DEBUG("Audio: {}", audioFile.c_str());
-            
+
             video->downloadState = DownloadState::Converting;
             onDownloadProgress.invoke(video);
             fs::path muxOutput = tempFolder / "video.mp4";

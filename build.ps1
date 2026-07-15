@@ -30,7 +30,9 @@ if (($clean.IsPresent) -or (-not (Test-Path -Path "build")))
     $out = new-item -Path build -ItemType Directory
 }
 
-& cmake -G "Ninja" -DCMAKE_BUILD_TYPE="$buildType" . -B build 
+echo ninja
+& cmake -G "Ninja" -DCMAKE_BUILD_TYPE="$buildType" . -B build
+echo build
 & cmake --build ./build
 $ExitCode = $LastExitCode
 exit $ExitCode

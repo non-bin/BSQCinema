@@ -58,7 +58,7 @@ if (($args.Count -eq 0) -And $package -eq $false) {
 
     if ($version.Length -gt 0) {
         $qmodName += "_$($version)"
-        qpm package edit --version $version
+        ./qpm package edit --version $version
     }
     else {
         $qmodName += "_$($qpmJson.info.version)"
@@ -82,7 +82,7 @@ $mod = "./mod.json"
 
 # $cover = "./" + $modJson.coverImage
 # if ((-not ($cover -eq "./")) -and (Test-Path $cover))
-# { 
+# {
 #     $filelist += ,$cover
 # } else {
 #     echo "No cover Image found"
@@ -120,7 +120,7 @@ $qmod = $qmodName + ".qmod"
 # Compress-Archive -Path $filelist -DestinationPath $zip -Update
 # Move-Item $zip $qmod -Force
 
-& qpm qmod zip -i ./build/ -i ./extern/libs/ $qmod
+& ./qpm qmod zip -i ./build/ -i ./extern/libs/ $qmod
 # Move-Item multiplayer-core.qmod $qmod -Force
 
 echo "Task Completed"
